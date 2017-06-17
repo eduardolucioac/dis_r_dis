@@ -1,7 +1,7 @@
 dis_r_dis - Discover the maximum possible resolutions for an external display.
 =============
 
-What is nppstub?
+What is dis_r_dis?
 -----
 
 It's a bash script that will try to DISCOVER THE MAXIMUM POSSIBLE RESOLUTIONS (*) for 
