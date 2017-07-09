@@ -43,7 +43,7 @@ EOF
 
 read -d '' WARNINGS_F <<"EOF"
 THIS SCRIPT COMES WITH ABSOLUTELY NO WARRANTY! USE AT YOUR OWN RISK! 
-WE ARE NOT RESPONSIBLE FOR ANY DAMAGE TO YOURSELF, HARDWARE, OR CO-WORKERS.
+WE ARE NOT RESPONSIBLE FOR ANY DAMAGE TO YOURSELF, HARDWARE OR CO-WORKERS.
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!! YOUR DISPLAY MAY CRASH !!!
@@ -137,7 +137,7 @@ f_div_section
 f_yes_no "The external display is working? Can you see your desktop or something like this?"
 if [ ${YES_NO_R} -eq 0 ] ; then
     f_div_section
-    f_yes_no "Is the external display connected to the HDMI port?"
+    f_yes_no "Is the external display connected to the HDMI port and switched on?"
     if [ ${YES_NO_R} -eq 1 ] ; then
         f_div_section
         f_yes_no "Try activating external HDMI display?"
@@ -155,17 +155,22 @@ if [ ${YES_NO_R} -eq 0 ] ; then
             f_okay_exit "The external HDMI display NEEDS TO BE ACTIVATED!"
         fi
     else
-        f_okay_exit "The external display NEEDS TO BE CONNECTED TO THE HDMI PORT!"
+        f_okay_exit "The external display NEEDS TO BE CONNECTED TO THE HDMI PORT AND SWITCHED ON!"
     fi
 fi
 
+clear
+f_get_stderr_stdout "xrandr -q"
 f_div_section
 f_get_usr_input "Enter the external display name!
-* To obtain this information use the command \"xrandr -q\"!"
+* Check BELOW. It's connected.
+ > --------------
+$F_GET_STDOUT_R
+ < --------------
+"
 DISP_NAME=$GET_USR_INPUT_R
 
 OKAY_XY_RES=""
-f_get_stderr_stdout "xrandr -q"
 f_split "$F_GET_STDOUT_R" "$DISP_NAME "
 f_split "${F_SPLIT_R[1]}" "\n"
 SPLIT_LEN=${#F_SPLIT_R[*]}
@@ -184,7 +189,7 @@ for (( i=0; i<=$(( $SPLIT_LEN -1 )); i++ )) ; do
         fi
         f_div_section
         f_yes_no "The \"secure\" resolution for the \"$DISP_NAME\" display appears to be \"$OKAY_XY_RES\". IS THIS OKAY?
-* To confirm this information use the command \"xrandr -q\" (it's marked with a \"*\")!"
+* Check ABOVE. It's marked with a \"*\"."
         if [ ${YES_NO_R} -eq 0 ] ; then
             f_error_exit
         fi
@@ -196,18 +201,19 @@ if [ -z "$OKAY_XY_RES" ] ; then
     f_error_exit "Could not set a \"safe\" resolution for the \"$DISP_NAME\" external display!"
 fi
 
+clear
 f_div_section
-f_get_usr_input "Enter the máximum X value suported by your display resolution (in 1400x900 will be 1400)!
+f_get_usr_input "Enter the máximum X value suported by your external display resolution (in 1400x900 will be 1400)!
 * If necessary consult the manufacturer!"
 MAX_X_RES=$GET_USR_INPUT_R
 
 f_div_section
-f_get_usr_input "Enter the máximum Y value suported by your display resolution (in 1400x900 will be 900)!
+f_get_usr_input "Enter the máximum Y value suported by your external display resolution (in 1400x900 will be 900)!
 * If necessary consult the manufacturer!"
 MAX_Y_RES=$GET_USR_INPUT_R
 
 f_div_section
-f_get_usr_input "Enter the máximum REFRESH RATE suported by your display!
+f_get_usr_input "Enter the máximum REFRESH RATE suported by your external display!
 * If necessary consult the manufacturer;
 * \"60\" may be a good value."
 MAX_REF_RATE=$GET_USR_INPUT_R
@@ -282,8 +288,8 @@ suggestions:
 
     THANKS! =D
 "
-        f_enter_to_cont "$INSTRUCTIONS_OP"
-        exit 0
+        echo "$INSTRUCTIONS_OP"
+        break
     fi
 done
 
