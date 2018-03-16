@@ -37,8 +37,6 @@ an EXTERNAL display connected on NOTEBOOKS with a NVIDIA GPU (OPTIMUS
 TECHNOLOGY) and the HDMI port WIRED to the GPU!
 
 (*) Resolutions that do not "crash" the display and keep its proportions!
-
-Have fun! =D
 EOF
 
 read -d '' WARNINGS_F <<"EOF"
@@ -56,7 +54,8 @@ read -d '' COMPANY_F <<"EOF"
 Copyright (c) 2017, Eduardo Lúcio Amorim Costa
 EOF
 
-f_begin "$TITLE_F" "$VERSION_F" "$ABOUT_F" "$WARNINGS_F" "$COMPANY_F"
+TUX=$(cat $SCRIPTDIR_V/tux.txt)
+f_begin "$TITLE_F" "$VERSION_F" "$ABOUT_F$TUX" "$WARNINGS_F" "$COMPANY_F"
 ABOUT_F=""
 WARNINGS_F=""
 
@@ -147,7 +146,8 @@ if [ ${YES_NO_R} -eq 0 ] ; then
             f_div_section
             f_yes_no "The external HDMI display is working now?
 * Will not work if it is disabled in the display/monitor settings;
-* You can make some adjustments in the display/monitor settings."
+* You can make some adjustments in the display/monitor settings.
+"
             if [ ${YES_NO_R} -eq 0 ] ; then
                 f_okay_exit "The external HDMI display NEEDS TO BE WORKING!"
             fi
@@ -163,7 +163,7 @@ clear
 f_get_stderr_stdout "xrandr -q"
 f_div_section
 f_get_usr_input "Enter the external display name!
-* Check BELOW. It's connected.
+* Check BELOW (it's connected):
  > --------------
 $F_GET_STDOUT_R
  < --------------
@@ -189,7 +189,8 @@ for (( i=0; i<=$(( $SPLIT_LEN -1 )); i++ )) ; do
         fi
         f_div_section
         f_yes_no "The \"secure\" resolution for the \"$DISP_NAME\" display appears to be \"$OKAY_XY_RES\". IS THIS OKAY?
-* Check ABOVE. It's marked with a \"*\"."
+* Check ABOVE. It's marked with a \"*\".
+"
         if [ ${YES_NO_R} -eq 0 ] ; then
             f_error_exit
         fi
@@ -204,18 +205,21 @@ fi
 clear
 f_div_section
 f_get_usr_input "Enter the máximum X value suported by your external display resolution (in 1400x900 will be 1400)!
-* If necessary consult the manufacturer!"
+* If necessary consult the manufacturer!
+"
 MAX_X_RES=$GET_USR_INPUT_R
 
 f_div_section
 f_get_usr_input "Enter the máximum Y value suported by your external display resolution (in 1400x900 will be 900)!
-* If necessary consult the manufacturer!"
+* If necessary consult the manufacturer!
+"
 MAX_Y_RES=$GET_USR_INPUT_R
 
 f_div_section
 f_get_usr_input "Enter the máximum REFRESH RATE suported by your external display!
 * If necessary consult the manufacturer;
-* \"60\" may be a good value."
+* \"60\" may be a good value.
+"
 MAX_REF_RATE=$GET_USR_INPUT_R
 
 MAX_RES_FACTOR=$(awk '{printf("%.16f\n",($1/$2))}' <<<" $MAX_X_RES $MAX_Y_RES ")
@@ -251,7 +255,7 @@ for (( i=0; i<$(( $ATTEMPTS )); i++ )) ; do
     eval "xrandr --output $DISP_NAME --mode $XRANDR_ADD_OUT"
     f_div_section
     f_yes_no "IS THIS CONFIGURATION OKAY? 
-[CURRENT VALUE: $XRANDR_ADD_OUT]" 7 0
+[CURRENT VALUE: $XRANDR_ADD_OUT]" 12 0
     if [ ${YES_NO_R} -eq 0 ] ; then
         eval "xrandr --delmode $DISP_NAME $XRANDR_ADD_OUT &>/dev/null"
         eval "xrandr --rmmode $XRANDR_NEWMODE_REM"
@@ -259,7 +263,7 @@ for (( i=0; i<$(( $ATTEMPTS )); i++ )) ; do
         f_div_section
         echo "Returning the display \"$DISP_NAME\" to the valid configuration \"$OKAY_XY_RES\"!"
         f_div_section
-        f_yes_no "DO YOU WANT TO CONTINUE TESTING?" 5 1
+        f_yes_no "DO YOU WANT TO CONTINUE TESTING?" 10 1
         if [ ${YES_NO_R} -eq 0 ] ; then
             f_okay_exit
         fi
